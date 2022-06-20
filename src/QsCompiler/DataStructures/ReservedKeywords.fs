@@ -245,7 +245,7 @@ module MSBuildProperties =
     let QuantumSdkVersion = "QuantumSdkVersion"
     let TargetPath = "TargetPath"
     let ResolvedProcessorArchitecture = "ResolvedProcessorArchitecture"
-    let ResolvedRuntimeCapabilities = "ResolvedRuntimeCapabilities"
+    let ResolvedTargetCapability = "ResolvedTargetCapability"
     let ResolvedQsharpOutputType = "ResolvedQSharpOutputType"
     let ExposeReferencesViaTestNames = "ExposeReferencesViaTestNames"
     let QsFmtExe = "QsFmtExe"
@@ -258,11 +258,15 @@ module AssemblyConstants =
     let QsharpOutputType = "QSharpOutputType"
     let QsharpExe = "QSharpExe"
     let QsharpLibrary = "QSharpLibrary"
+    let QuantumInstructionSet = "QuantumInstructionSet"
     let ProcessorArchitecture = "ProcessorArchitecture"
+    [<Obsolete("Replaced by QuantinuumProcessor.")>]
     let HoneywellProcessor = "HoneywellProcessor"
     let IonQProcessor = "IonQProcessor"
     let QCIProcessor = "QCIProcessor"
     let QuantinuumProcessor = "QuantinuumProcessor"
+    let RigettiProcessor = "RigettiProcessor"
+    let MicrosoftSimulator = "MicrosoftSimulator"
     let ExecutionTarget = "ExecutionTarget"
     let TargetCapability = "TargetCapability"
     let DefaultSimulator = "DefaultSimulator"
@@ -275,7 +279,8 @@ module AssemblyConstants =
     let PerfDataOutputPath = "PerfDataOutputPath"
     let DocsOutputPath = "DocsOutputPath"
     let DocsPackageId = "DocsPackageId"
-    let GenerateConcreteIntrinsic = "GenerateConcreteIntrinsic"
+    let IsTargetPackage = "IsTargetPackage"
+    let TargetPackageAssemblies = "TargetPackageAssemblies"
 
 /// contains reserved names for command line arguments of Q# projects
 module CommandLineArguments =
