@@ -122,7 +122,12 @@ namespace Microsoft.Quantum.QsLanguageServer
             // project item groups
             var sourceFiles = GetItemsByType(projectInstance, "QSharpCompile");
             var projectReferences = GetItemsByType(projectInstance, "ProjectReference");
-            var references = GetItemsByType(projectInstance, "Reference");
+
+            // we need to normalize paths here -
+            // see also https://stackoverflow.com/questions/1266674/how-can-one-get-an-absolute-or-normalized-file-path-in-net
+            var decompositions =
+                GetItemsByType(projectInstance, "ResolvedTargetSpecificDecompositions").Select(Path.GetFullPath);
+            var references = GetItemsByType(projectInstance, "Reference").Except(decompositions);
 
             // telemetry data
             var defaultSimulator = projectInstance.GetPropertyValue("DefaultSimulator")?.Trim();
@@ -143,7 +148,7 @@ namespace Microsoft.Quantum.QsLanguageServer
             AddProperty(buildProperties, MSBuildProperties.QuantumSdkPath);
             AddProperty(buildProperties, MSBuildProperties.QuantumSdkVersion);
             AddProperty(buildProperties, MSBuildProperties.QsharpLangVersion);
-            AddProperty(buildProperties, MSBuildProperties.ResolvedRuntimeCapabilities);
+            AddProperty(buildProperties, MSBuildProperties.ResolvedTargetCapability);
             AddProperty(buildProperties, MSBuildProperties.ResolvedQsharpOutputType);
             AddProperty(buildProperties, MSBuildProperties.ExposeReferencesViaTestNames);
             AddProperty(buildProperties, MSBuildProperties.QsFmtExe);
