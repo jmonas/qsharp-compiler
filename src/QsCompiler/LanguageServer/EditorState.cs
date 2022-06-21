@@ -122,7 +122,12 @@ namespace Microsoft.Quantum.QsLanguageServer
             // project item groups
             var sourceFiles = GetItemsByType(projectInstance, "QSharpCompile");
             var projectReferences = GetItemsByType(projectInstance, "ProjectReference");
-            var references = GetItemsByType(projectInstance, "Reference");
+
+            // we need to normalize paths here -
+            // see also https://stackoverflow.com/questions/1266674/how-can-one-get-an-absolute-or-normalized-file-path-in-net
+            var decompositions =
+                GetItemsByType(projectInstance, "ResolvedTargetSpecificDecompositions").Select(Path.GetFullPath);
+            var references = GetItemsByType(projectInstance, "Reference").Except(decompositions);
 
             // telemetry data
             var defaultSimulator = projectInstance.GetPropertyValue("DefaultSimulator")?.Trim();
@@ -134,8 +139,16 @@ namespace Microsoft.Quantum.QsLanguageServer
             this.sendTelemetry?.Invoke("project-load", telemetryProps, telemetryMeas); // does not send anything unless the corresponding flag is defined upon compilation
 
             // project properties
-            void AddProperty(IDictionary<string, string?> props, string property) =>
-                props.Add(property, projectInstance.GetPropertyValue(property));
+            void AddProperty(IDictionary<string, string?> props, string property, params string[] alternativeNames)
+            {
+                var propVal = projectInstance.GetPropertyValue(property);
+                for (var i = 0; string.IsNullOrWhiteSpace(propVal) && i < alternativeNames.Length; ++i)
+                {
+                    propVal = projectInstance.GetPropertyValue(alternativeNames[i]);
+                }
+
+                props.Add(property, propVal);
+            }
 
             var buildProperties = ImmutableDictionary.CreateBuilder<string, string?>();
             AddProperty(buildProperties, MSBuildProperties.TargetPath);
@@ -143,7 +156,9 @@ namespace Microsoft.Quantum.QsLanguageServer
             AddProperty(buildProperties, MSBuildProperties.QuantumSdkPath);
             AddProperty(buildProperties, MSBuildProperties.QuantumSdkVersion);
             AddProperty(buildProperties, MSBuildProperties.QsharpLangVersion);
-            AddProperty(buildProperties, MSBuildProperties.ResolvedRuntimeCapabilities);
+#pragma warning disable CS0618 // Type or member is obsolete
+            AddProperty(buildProperties, MSBuildProperties.ResolvedTargetCapability, MSBuildProperties.ResolvedRuntimeCapabilities);
+#pragma warning restore CS0618 // Type or member is obsolete
             AddProperty(buildProperties, MSBuildProperties.ResolvedQsharpOutputType);
             AddProperty(buildProperties, MSBuildProperties.ExposeReferencesViaTestNames);
             AddProperty(buildProperties, MSBuildProperties.QsFmtExe);
