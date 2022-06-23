@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Quantum.Compiler" Version="0.24.210930" />
+    <PackageReference Include="Microsoft.Quantum.Compiler" Version="0.24.217479-sdl" />
   </ItemGroup>
 
 </Project>
